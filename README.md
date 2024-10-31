@@ -1,5 +1,5 @@
 # Polymarket Widgets
-The goal of this repository is to share Polymarket Widgets that display the odds of certain markets, through Scriptable (iOS only).
+The goal of this repository is to share Polymarket Widgets that display the odds of certain markets, through Scriptable (iOS only). This was made enhancing the original script made by [ferminrp](https://gist.github.com/ferminrp) (thanks!).
 
 For now, there's only the 2024 Election Odds widget available, but more will come in due time (or through requests). It's also quite simple to customize if you have some programming knowledge (I'm a total noob myself btw).
 
