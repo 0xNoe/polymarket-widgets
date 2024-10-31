@@ -25,4 +25,4 @@ Then, by clicking on the two slides button in the bottom left corner, you can gi
 ### Add the widget
 Now, go to your home page, add a widget, search for Scriptable and add the app widget. After doing that, you'll see that you need to click on it in order to configure the script to be displayed in that widget. Once you select the script you've just created, it's done !
 
-<img src="illustrations/widget.jpeg" width="294" height="364">
+<img src="illustrations/widget.png" width="294" height="364">
