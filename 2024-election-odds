@@ -1,0 +1,100 @@
+const url = "https://clob.polymarket.com/rewards/markets/0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917";
+const electionDate = new Date("2024-11-05T00:00:00Z");
+
+const repLogoUrl = "https://bloximages.chicago2.vip.townnews.com/gainesvilleregister.com/content/tncms/assets/v3/editorial/4/0f/40f845b4-ee86-11ec-a2d6-87bcd9563120/62acf5411789d.image.png";
+const demLogoUrl = "https://seeklogo.com/images/D/democratic-donkey-logo-D6017B7EA8-seeklogo.com.png";
+
+async function fetchOdds(outcome) {
+  const request = new Request(url);
+  const response = await request.loadJSON();
+  const token = response.data[0].tokens.find(token => token.outcome === outcome);
+  return token ? token.price * 100 : 0;
+}
+
+function getCountdownText() {
+  const now = new Date();
+  const remainingTime = electionDate - now;
+
+  if (remainingTime <= 0) {
+    return "Ongoing";
+  }
+
+  const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  return `${days} days, ${hours} hrs`;
+}
+
+async function createWidget() {
+  // Fetch odds for Trump and Kamala
+  const trumpOdds = await fetchOdds("Yes");
+  const kamalaOdds = await fetchOdds("No");
+
+  // Create widget
+  const widget = new ListWidget();
+  widget.backgroundColor = new Color("#1c1c1e");
+
+  // Add title
+  const title = widget.addText("2024 Election Odds");
+  title.font = Font.boldSystemFont(16);
+  title.textColor = Color.white();
+
+  widget.addSpacer(4);
+
+  // Add countdown timer under the title
+  const countdownText = widget.addText(`Countdown: ${getCountdownText()}`);
+  countdownText.font = Font.systemFont(12);
+  countdownText.textColor = Color.green();
+
+  widget.addSpacer(8);
+
+  // Load logos
+  const repLogo = await loadImage(repLogoUrl);
+  const demLogo = await loadImage(demLogoUrl);
+
+  // Add Trump's odds with Republican logo
+  const trumpStack = widget.addStack();
+  const repLogoImg = trumpStack.addImage(repLogo);
+  repLogoImg.imageSize = new Size(20, 20);
+  trumpStack.addSpacer(4);
+
+  const trumpText = trumpStack.addText(`Trump: ${trumpOdds.toFixed(1)}%`);
+  trumpText.font = Font.systemFont(20);
+  trumpText.textColor = Color.orange();
+
+  widget.addSpacer(4);
+
+  // Add Kamala's odds with Democratic logo
+  const kamalaStack = widget.addStack();
+  const demLogoImg = kamalaStack.addImage(demLogo);
+  demLogoImg.imageSize = new Size(20, 20);
+  kamalaStack.addSpacer(4);
+
+  const kamalaText = kamalaStack.addText(`Kamala: ${kamalaOdds.toFixed(1)}%`);
+  kamalaText.font = Font.systemFont(20);
+  kamalaText.textColor = Color.blue();
+
+  widget.addSpacer(8);
+
+  // Add last update time with date and time
+  const updateTime = new Date();
+  const updateText = widget.addText(`Updated at ${updateTime.toLocaleDateString()} ${updateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+  updateText.font = Font.systemFont(10);
+  updateText.textColor = Color.gray();
+
+  return widget;
+}
+
+async function loadImage(url) {
+  const request = new Request(url);
+  return await request.loadImage();
+}
+
+let widget = await createWidget();
+
+if (config.runsInWidget) {
+  Script.setWidget(widget);
+} else {
+  widget.presentMedium();
+}
+
+Script.complete();
